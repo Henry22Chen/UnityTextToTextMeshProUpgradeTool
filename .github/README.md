@@ -1,5 +1,7 @@
 # Text To TextMesh Pro Upgrade Tool for Unity
 
+> Auto find the font asset's materials and set the outline and shadow. Mapping a font with specific font style to a font asset.
+
 ![screenshot](Images/Screenshot.png)
 
 **Available on Asset Store:** https://assetstore.unity.com/packages/tools/utilities/text-to-textmesh-pro-upgrade-tool-176732
