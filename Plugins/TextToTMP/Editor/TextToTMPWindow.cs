@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TMPro;
+using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -277,6 +279,7 @@ namespace TextToTMPNamespace
 									fontUpgrade.tmpFontMaterialShadow = fontUpgrade.tmpFontMaterialDefault;
 									fontUpgrade.tmpFontMaterialOutline = fontUpgrade.tmpFontMaterialDefault;
 									fontUpgrade.tmpFontMaterialShadowAndOutline = fontUpgrade.tmpFontMaterialDefault;
+									SetOutlineAndShadowMaterials(fontUpgrade);
 								}
 
 								fontUpgrades.Add( fontUpgrade );
@@ -317,6 +320,7 @@ namespace TextToTMPNamespace
 						fontUpgrades[i].tmpFontMaterialShadow = fontUpgrades[i].tmpFontMaterialDefault;
 						fontUpgrades[i].tmpFontMaterialOutline = fontUpgrades[i].tmpFontMaterialDefault;
 						fontUpgrades[i].tmpFontMaterialShadowAndOutline = fontUpgrades[i].tmpFontMaterialDefault;
+						SetOutlineAndShadowMaterials(fontUpgrades[i]);
 					}
 
 					fontUpgrades[i].tmpFontMaterialDefault = EditorGUILayout.ObjectField( "TMP Font Default Material", fontUpgrades[i].tmpFontMaterialDefault, typeof( Material ), false ) as Material;
@@ -560,6 +564,39 @@ namespace TextToTMPNamespace
 			}
 		}
 
+		private void SetOutlineAndShadowMaterials(FontUpgrade fontUpgrade)
+		{
+			var materials = TMP_EditorUtility.FindMaterialReferences(fontUpgrade.tmpFont);
+			foreach (var material in materials)
+			{
+				var isOutline = IsKeywordEnable(material, ShaderUtilities.Keyword_Outline);
+				var isShadow = IsKeywordEnable(material, ShaderUtilities.Keyword_Underlay);
+				if (isOutline && isShadow)
+				{
+					fontUpgrade.tmpFontMaterialShadowAndOutline = material;
+				}
+				else if (isOutline)
+				{
+					fontUpgrade.tmpFontMaterialOutline = material;
+				}
+				else if (isShadow)
+				{
+					fontUpgrade.tmpFontMaterialShadow = material;
+				}
+			}
+		}
+
+		private bool IsKeywordEnable(Material material, string keyword)
+		{
+			if (material == null || !material.HasProperty(ShaderUtilities.ID_MainTex))
+				return false;
+
+			if (material.shaderKeywords.Contains(keyword))
+				return true;
+
+			return false;
+		}
+		
 		private TMP_FontAsset GetCorrespondingTMPFontAsset( Font font )
 		{
 			if( !font )
