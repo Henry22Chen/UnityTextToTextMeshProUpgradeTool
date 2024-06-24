@@ -32,6 +32,7 @@ namespace TextToTMPNamespace
 			public Material tmpFontMaterialShadow;
 			public Material tmpFontMaterialOutline;
 			public Material tmpFontMaterialShadowAndOutline;
+			public FontStyles fontStyle;
 		}
 
 		[Serializable]
@@ -275,6 +276,7 @@ namespace TextToTMPNamespace
 
 								if( fontUpgrade.tmpFont )
 								{
+									fontUpgrade.fontStyle = FontStyles.Normal;
 									fontUpgrade.tmpFontMaterialDefault = fontUpgrade.tmpFont.material;
 									fontUpgrade.tmpFontMaterialShadow = fontUpgrade.tmpFontMaterialDefault;
 									fontUpgrade.tmpFontMaterialOutline = fontUpgrade.tmpFontMaterialDefault;
@@ -316,6 +318,7 @@ namespace TextToTMPNamespace
 					fontUpgrades[i].tmpFont = EditorGUILayout.ObjectField( "TMP Font", fontUpgrades[i].tmpFont, typeof( TMP_FontAsset ), false ) as TMP_FontAsset;
 					if( EditorGUI.EndChangeCheck() )
 					{
+						fontUpgrades[i].fontStyle = FontStyles.Normal;
 						fontUpgrades[i].tmpFontMaterialDefault = fontUpgrades[i].tmpFont ? fontUpgrades[i].tmpFont.material : null;
 						fontUpgrades[i].tmpFontMaterialShadow = fontUpgrades[i].tmpFontMaterialDefault;
 						fontUpgrades[i].tmpFontMaterialOutline = fontUpgrades[i].tmpFontMaterialDefault;
@@ -323,6 +326,7 @@ namespace TextToTMPNamespace
 						SetOutlineAndShadowMaterials(fontUpgrades[i]);
 					}
 
+					fontUpgrades[i].fontStyle = (FontStyles)EditorGUILayout.EnumPopup("Font Style", fontUpgrades[i].fontStyle);
 					fontUpgrades[i].tmpFontMaterialDefault = EditorGUILayout.ObjectField( "TMP Font Default Material", fontUpgrades[i].tmpFontMaterialDefault, typeof( Material ), false ) as Material;
 					fontUpgrades[i].tmpFontMaterialShadow = EditorGUILayout.ObjectField( "TMP Font Shadow Material", fontUpgrades[i].tmpFontMaterialShadow, typeof( Material ), false ) as Material;
 					fontUpgrades[i].tmpFontMaterialOutline = EditorGUILayout.ObjectField( "TMP Font Outline Material", fontUpgrades[i].tmpFontMaterialOutline, typeof( Material ), false ) as Material;
@@ -612,9 +616,9 @@ namespace TextToTMPNamespace
 			return fontUpgrades[0].tmpFont;
 		}
 
-		private TMP_FontAsset GetCorrespondingTMPFontAsset( Font font, Component source, out Material fontMaterial )
+		private TMP_FontAsset GetCorrespondingTMPFontAsset( Font font, Component source, out Material fontMaterial, out FontUpgrade fontUpgrade )
 		{
-			FontUpgrade fontUpgrade = fontUpgrades[0];
+			fontUpgrade = fontUpgrades[0];
 			for( int i = 1; i < fontUpgrades.Count; i++ )
 			{
 				if( fontUpgrades[i].unityFont == font )

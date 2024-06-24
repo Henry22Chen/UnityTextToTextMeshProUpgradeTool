@@ -311,8 +311,9 @@ namespace TextToTMPNamespace
 		private TextProperties CopyTextProperties( Text text )
 		{
 			Material fontMaterial;
-			TMP_FontAsset font = GetCorrespondingTMPFontAsset( text.font, text, out fontMaterial );
-
+			TMP_FontAsset font = GetCorrespondingTMPFontAsset( text.font, text, out fontMaterial, out var fontUpgrade );
+			var fontStyle = fontUpgrade.fontStyle;
+			
 			return new TextProperties()
 			{
 				gameObject = text.gameObject,
@@ -325,7 +326,7 @@ namespace TextToTMPNamespace
 				fontMaterial = fontMaterial,
 				font = font,
 				fontSize = text.fontSize,
-				fontStyle = GetTMPFontStyle( text.fontStyle ),
+				fontStyle = fontStyle == FontStyles.Normal ? GetTMPFontStyle( text.fontStyle ) : fontStyle,
 				horizontalWrapMode = text.horizontalOverflow == HorizontalWrapMode.Wrap,
 				lineSpacing = ( text.lineSpacing - 1 ) * 100f,
 				raycastTarget = text.raycastTarget,
@@ -385,7 +386,8 @@ namespace TextToTMPNamespace
 		private TextMeshProperties CopyTextMeshProperties( TextMesh text )
 		{
 			Material fontMaterial;
-			TMP_FontAsset font = GetCorrespondingTMPFontAsset( text.font, text, out fontMaterial );
+			TMP_FontAsset font = GetCorrespondingTMPFontAsset( text.font, text, out fontMaterial, out var fontUpgrade );
+			var fontStyle = fontUpgrade.fontStyle;
 
 			return new TextMeshProperties()
 			{
@@ -396,7 +398,7 @@ namespace TextToTMPNamespace
 				fontMaterial = fontMaterial,
 				font = font,
 				fontSize = text.fontSize > 0 ? text.fontSize : 13,
-				fontStyle = GetTMPFontStyle( text.fontStyle ),
+				fontStyle = fontStyle == FontStyles.Normal ? GetTMPFontStyle( text.fontStyle ) : fontStyle,
 				lineSpacing = ( text.lineSpacing - 1 ) * 100f,
 				offsetZ = text.offsetZ,
 				richText = text.richText,
